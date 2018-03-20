@@ -177,7 +177,7 @@ class App extends Component {
     <RadioButtonGroup name={elem.Q} style={{display:"flex" , flexDirection:"row"}}>
       <RadioButton
         value="applause"
-        label={ <img src='https://www.smileysapp.com/gif-emoji/clapping.gif' width="55" height="55" alt="Applause" /> }
+        label={ <img src='https://www.smileysapp.com/gif-emoji/clapping.gif' width="60" height="60" alt="Applause" /> }
         style={styles.radioButton}
       />
       <RadioButton
@@ -187,12 +187,12 @@ class App extends Component {
     />
     <RadioButton
         value="boring"
-        label={ <img src='http://3.bp.blogspot.com/-cDdxoFCq3mU/VlPAtfwcpHI/AAAAAAAARlc/4NKARbFMv2I/s1600/yawn-smiley.gif' width="40" height="40" alt="Boring" /> }        
+        label={ <img src='http://3.bp.blogspot.com/-cDdxoFCq3mU/VlPAtfwcpHI/AAAAAAAARlc/4NKARbFMv2I/s1600/yawn-smiley.gif' width="45" height="45" alt="Boring" /> }        
         style={styles.radioButton}
       />
     <RadioButton
         value="cry"
-        label={ <img src='https://www.smileysapp.com/gif-emoji/weeping.gif' width="55" height="55" alt="Cry" /> }        
+        label={ <img src='https://www.smileysapp.com/gif-emoji/weeping.gif' width="60" height="60" alt="Cry" /> }        
         style={styles.radioButton}
       />
     
@@ -202,17 +202,18 @@ class App extends Component {
     <RadioButtonGroup name={elem.Q} style={{display:"flex" , flexDirection:"row"}}>
     <RadioButton
       value="thumbs up"
-      label={ <img src='https://www.smileysapp.com/gif-emoji/thumbs-up.gif' width="55" height="55" alt="Yes!" /> }
+      label={ <img src='https://www.smileysapp.com/gif-emoji/thumbs-up.gif' width="60" height="60" alt="Yes!" /> }
       style={styles.radioButton}
     />
     <RadioButton
     value="thumbs down"
-    label={ <img src='https://www.smileysapp.com/gif-emoji/thumbs-down.gif' width="55" height="55" alt="No!" /> }        
+    label={ <img src='https://www.smileysapp.com/gif-emoji/thumbs-down.gif' width="60" height="60" alt="No!" /> }        
     style={styles.radioButton}
   />
   <RadioButton
       value="confused"
-      label={ <img src='https://www.smileysapp.com/gif-emoji/dont-know.gif' width="55" height="55" alt="Er..." /> }        
+      //https://www.smileysapp.com/gif-emoji/dont-know.gif
+      label={ <img src='http://www.sherv.net/cm/emoticons/confused/confused-face-smiley-emoticon.gif' width="55" height="65" alt="Er..." /> }        
       style={styles.radioButton}
     />
   </RadioButtonGroup>
@@ -220,7 +221,7 @@ class App extends Component {
 
 {elem.ACategory=="text" &&
     <div>
-  <img src='https://www.smileysapp.com/gif-emoji/writing.gif' width="55" height="55" alt="Writing" />
+  <img src='https://www.smileysapp.com/gif-emoji/writing.gif' width="60" height="60" alt="Writing" />
       <TextField
       hintText="Any Suggestions?!"
       multiLine={true}
