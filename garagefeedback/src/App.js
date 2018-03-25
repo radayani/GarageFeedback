@@ -190,6 +190,7 @@ class App extends Component {
     this.state.questionsForThisCategory[index]['Answer'] = myValue;
     this.state.questionsForThisCategory[index]['EmployeeAlias'] = this.state.employeeAlias;
     this.state.questionsForThisCategory[index]['Event'] = this.state.garageEventDefault;
+    this.state.questionsForThisCategory[index]['TimeTicks'] = new Date();
     
     // this.state.questionsForThisCategory[index]['RowKey'] =  { '$': 'Edm.String', _:  new Date() };
     console.log(this.state.questionsForThisCategory[index]);
@@ -207,6 +208,7 @@ class App extends Component {
     this.state.questionsForThisCategory[index]['Answer'] = myValue;
     this.state.questionsForThisCategory[index]['EmployeeAlias'] = this.state.employeeAlias;
     this.state.questionsForThisCategory[index]['Event'] = this.state.garageEventDefault;
+    this.state.questionsForThisCategory[index]['TimeTicks'] = new Date().getTime();
     
     console.log(this.state.questionsForThisCategory[index]);
     
