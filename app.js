@@ -21,7 +21,7 @@ var bodyParser = require('body-parser');
 const uuidv1 = require('uuid/v1');
 var dateFormat = require('dateformat');
 var now = new Date();
-var stringifiedJson = fs.readFileSync('getValues.json', 'utf8');
+var stringifiedJson = fs.readFileSync('../getValues.json', 'utf8');
 var jsonSecrets = JSON.parse(stringifiedJson);
 
 var accessKey = jsonSecrets.storageAccountKey; // '5cBnLmOhF5AA/RC2y2TRYjfATfj+GOUOMT4hsAlM+CMDQaLDMrrY7GOLgdEA0/wSJeGVEOCtwcmU2U3iCBotXg==';
