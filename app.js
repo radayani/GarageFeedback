@@ -119,10 +119,11 @@ app.use('/submit', function (req, res) {
   var responses=req.body; 
   tableService.createTableIfNotExists('feedbackresponses', function (error, result, response) {
     if (!error) {
-      console.log("came here");
+      // console.log("submit ");
       // table exists or created. Result contains true if created; false if already exists
       if (result.created) {
-        console.log("new table is created !");
+        throw "New Table Got Created!";
+        // console.log("new table is created !");
       }
       else {
         // var task = {
@@ -134,26 +135,34 @@ app.use('/submit', function (req, res) {
         var batch = new azure.TableBatch();
         // var now = ;
         for(var i = 0; i < responses.length;i++){
-          responses[i]['RowKey']['_'] =  uuidv1(new Date().getTime());
+          responses[i]['RowKey']['_'] = uuidv1(new Date().getTime());
           if(!responses[i]['Answer'] || responses[i]['Answer'] == undefined || responses[i]['Answer']['_'] == "" )
-          continue;
+          {
+            continue;
+          }
           else
           {
             batch.insertEntity(responses[i], {echoContent: false});
           }                   
         }
+        client.trackEvent("Number of questions answered by ",responses[0]['EmployeeId'], " for event",responses[0]['Event'],  " :batch.size()");
         if(batch.hasOperations()){
           tableService.executeBatch('feedbackresponses',batch, function (error, result, response) {
             if(!error) {
-              res.send(response);
+              // console.log(result);
+              res.status(200).json({"msg":"Your Response is Recorded. Thanks!"}).end()
             }
             else{
-              console.log(error);
+              client.trackException(new Error("Error Occurred while trying to insert the batched entity:"+error));
+              res.status(500).json({"msg":"Error! Please Try Again!"}).end();
+              
+              // console.log(error);
             }
           });
         }
         else{
-          console.log("no DATA ");
+          client.trackEvent(new Error ("No feedback is provided by " + responses[0]['EmployeeId']));
+          res.status(404).json({"msg":"Please Fill a Response..."}).end();
         }
       }
     }

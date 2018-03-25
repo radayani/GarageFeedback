@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { cyan700, blue100, blue200, fullWhite, redA700 } from 'material-ui/styles/colors';
+import { cyan700, blue100, blue200, fullWhite, redA700, greenA700 } from 'material-ui/styles/colors';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import TextField from 'material-ui/TextField';
@@ -61,8 +61,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      employeeIdNotSetDialogOpen: false,
-      employeeId :"",
+      employeeAlias :"",
       questionsForThisCategory:   
       [
         // {Q: "Did you like the session?", ACategory: "binary"},
@@ -78,7 +77,10 @@ class App extends Component {
       phoneScreen:true,
       showFeedback:false, 
       arrowButtonClicked:false, 
-      eventChangeHappened:false      
+      eventChangeHappened:false, 
+      snackbarOpen: false,    
+      snackbarStatus:0, 
+      snackbarMessage:""
     }
   }
   componentDidMount(){
@@ -88,15 +90,29 @@ class App extends Component {
       // , function () { console.log("zzzzzz: "); console.log(garageEvents[0].EventName._) }
     ));
   }
-  handleEmployeeIdValueChange(event, newValue) {
+
+  handleRequestCloseSuccess = () => {
+    this.setState({
+      snackbarOpen: false,
+      garageEventDefault:"Garage General Feedback",
+      garageEventCategoryDefault:-1,
+      showFeedback:false, 
+      arrowButtonClicked:false, 
+      eventChangeHappened:false,
+      questionsForThisCategory:[]
+    });
+  };
+
+
+  handleEmployeeAliasValueChange(event, newValue) {
     
-    this.setState({ employeeId: newValue }, function () {
-      console.log(this.state.employeeId);
+    this.setState({ employeeAlias: newValue }, function () {
+      console.log(this.state.employeeAlias);
     });
   }
   
-  handleEmployeeIdDialogRequestClose() {
-    this.setState({ employeeIdNotSetDialogOpen: false, employeeIdWrongDialogOpen: false, employeeIdAlreadyInUseDialogOpen: false });
+  handleemployeeAliasDialogRequestClose() {
+    this.setState({ employeeAliasNotSetDialogOpen: false, employeeAliasWrongDialogOpen: false, employeeAliasAlreadyInUseDialogOpen: false });
   }
 
   handleEventSelection(event, index, value) {
@@ -117,7 +133,7 @@ class App extends Component {
   handleSurveySubmitButton() {
     console.log("survey submit clicked");
     for(var i=0;i<this.state.questionsForThisCategory.length;i++)
-    this.state.questionsForThisCategory[i]['RowKey']._ = (this.state.employeeId == "" ? "null" : this.state.employeeId);
+    this.state.questionsForThisCategory[i]['RowKey']._ = (this.state.employeeAlias == "" ? "null" : this.state.employeeAlias);
     console.log(JSON.stringify(this.state.questionsForThisCategory));
 
 
@@ -129,7 +145,19 @@ class App extends Component {
 
     },
       body: JSON.stringify(this.state.questionsForThisCategory)
-    }).then(console.log("called survey submit api"));
+    }).then(res =>
+      res.json().then(data => ({
+        data: data,
+        status: res.status
+      })))
+    .then(res => {
+          this.setState({ snackbarMessage: res.data.msg, snackbarOpen:true, snackbarStatus:res.status }, function () {
+      });
+    })
+      .catch(function(err){
+      console.log(err );
+      console.log("try resubmitting..");
+    })
   }
     
     // ?event=${this.state.garageEventDefault}`)
@@ -163,7 +191,7 @@ class App extends Component {
     });
     console.log(index, obj);
     this.state.questionsForThisCategory[index]['Answer'] = myValue;
-    this.state.questionsForThisCategory[index]['EmployeeId'] = this.state.employeeId;
+    this.state.questionsForThisCategory[index]['EmployeeAlias'] = this.state.employeeAlias;
     this.state.questionsForThisCategory[index]['Event'] = this.state.garageEventDefault;
     
     // this.state.questionsForThisCategory[index]['RowKey'] =  { '$': 'Edm.String', _:  new Date() };
@@ -180,7 +208,7 @@ class App extends Component {
       }
     });
     this.state.questionsForThisCategory[index]['Answer'] = myValue;
-    this.state.questionsForThisCategory[index]['EmployeeId'] = this.state.employeeId;
+    this.state.questionsForThisCategory[index]['EmployeeAlias'] = this.state.employeeAlias;
     this.state.questionsForThisCategory[index]['Event'] = this.state.garageEventDefault;
     
     console.log(this.state.questionsForThisCategory[index]);
@@ -216,10 +244,10 @@ class App extends Component {
 
         <MuiThemeProvider muiTheme={muiTheme}>
           <TextField className="App-intro"
-            hintText="Enter Your Employee Id"
+            hintText="Enter Your Employee Alias"
             style={{ width:"200" }}
-            onChange={this.handleEmployeeIdValueChange.bind(this)}
-            floatingLabelText="Employee Id"
+            onChange={this.handleEmployeeAliasValueChange.bind(this)}
+            floatingLabelText="Employee Alias"
             type="text"
           />
         </MuiThemeProvider>
@@ -337,6 +365,25 @@ class App extends Component {
           <br/>
           <RaisedButton label="Submit" primary={true} style={{margin:"12"}} onClick={this.handleSurveySubmitButton.bind(this)}/>
           <br/><br/>
+          <br/>
+          {this.state.snackbarStatus==200?
+          <Snackbar
+          style={{ width: "90%" }}
+          bodyStyle={{ backgroundColor: greenA700 }}
+          open={this.state.snackbarOpen}
+          message={this.state.snackbarMessage}
+          autoHideDuration={4000}
+          onRequestClose={this.handleRequestCloseSuccess}
+        />:
+        <Snackbar
+          style={{ width: "90%" }}
+          bodyStyle={{ backgroundColor: redA700 }}
+          open={this.state.snackbarOpen}
+          message={this.state.snackbarMessage}
+          autoHideDuration={4000}
+          onRequestClose={this.handleRequestCloseFailure}
+        />}
+
           </div>
           }
         
