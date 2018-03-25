@@ -56,6 +56,7 @@ app.use('/events', (req, res, err) => {
       // table exists or created
       // result contains true if created; false if already exists
       if (result.created) {
+        
         console.log("new table is created !");
       }
       else {
@@ -69,9 +70,9 @@ app.use('/events', (req, res, err) => {
         // var nowDate = new Date(ist);
         // console.log(Date.parse('3/26/2018  12:00:00 AM GMT+0530'));
         // console.log(nowDate);
-        console.log(now);
-        console.log(now.toString());
-        console.log("table already existed!")
+        // console.log(now);
+        // console.log(now.toString());
+        // console.log("table already existed!")
         var query = new azure.TableQuery().where( 'StartDate le ?', now, ' and EndDate ge ?', now  );
         tableService.queryEntities('garageeventsforfeedback',query, null, function(error, result, response) {
           if(!error) {
@@ -122,8 +123,8 @@ app.use('/submit', function (req, res) {
       // console.log("submit ");
       // table exists or created. Result contains true if created; false if already exists
       if (result.created) {
-        throw "New Table Got Created!";
-        // console.log("new table is created !");
+        // throw "New Table Got Created!";
+        console.log("new table is created !");
       }
       else {
         // var task = {

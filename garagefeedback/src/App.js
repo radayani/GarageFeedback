@@ -104,7 +104,7 @@ class App extends Component {
   handleEmployeeAliasValueChange(event, newValue) {
     
     this.setState({ employeeAlias: newValue }, function () {
-      console.log(this.state.employeeAlias);
+      // console.log(this.state.employeeAlias);
     });
   }
   
@@ -114,7 +114,7 @@ class App extends Component {
 
   handleEventSelection(event, index, value) {
     this.setState({ garageEventDefault: value, arrowButtonClicked:false, eventChangeHappened:true }, function () {
-      console.log("hi")
+      // console.log("hi")
 
     });
   }
@@ -128,10 +128,10 @@ class App extends Component {
   }
   
   handleSurveySubmitButton() {
-    console.log("survey submit clicked");
+    // console.log("survey submit clicked");
     for(var i=0;i<this.state.questionsForThisCategory.length;i++)
     this.state.questionsForThisCategory[i]['RowKey']._ = (this.state.employeeAlias == "" ? "null" : this.state.employeeAlias);
-    console.log(JSON.stringify(this.state.questionsForThisCategory));
+    // console.log(JSON.stringify(this.state.questionsForThisCategory));
 
 
     fetch(`/submit`, {
@@ -164,7 +164,7 @@ class App extends Component {
   // }
 
   handleBinaryButtonSelection(event, value, myValue) {
-    console.log(value + "--1--" + myValue + "--2--" + event);
+    // console.log(value + "--1--" + myValue + "--2--" + event);
     var index =-1;
     var obj = this.state.questionsForThisCategory.find(function(item, i){
       if(item.Question._ === event){
@@ -172,13 +172,13 @@ class App extends Component {
         return i;
       }
     });
-    console.log(index, obj);
+    // console.log(index, obj);
     this.state.questionsForThisCategory[index]['Answer'] = myValue;
-    console.log(this.state.questionsForThisCategory[index]);
+    // console.log(this.state.questionsForThisCategory[index]);
   }
 
   handleRadioButtonSelection(event, value, myValue) {
-    console.log(value + "--1--" + myValue + "--2--" + event);
+    // console.log(value + "--1--" + myValue + "--2--" + event);
     var index =-1;
     var obj = this.state.questionsForThisCategory.find(function(item, i){
       if(item.Question._ === event){
@@ -186,18 +186,18 @@ class App extends Component {
         return i;
       }
     });
-    console.log(index, obj);
+    // console.log(index, obj);
     this.state.questionsForThisCategory[index]['Answer'] = myValue;
     this.state.questionsForThisCategory[index]['EmployeeAlias'] = this.state.employeeAlias;
     this.state.questionsForThisCategory[index]['Event'] = this.state.garageEventDefault;
     this.state.questionsForThisCategory[index]['TimeTicks'] = new Date();
     
     // this.state.questionsForThisCategory[index]['RowKey'] =  { '$': 'Edm.String', _:  new Date() };
-    console.log(this.state.questionsForThisCategory[index]);
+    // console.log(this.state.questionsForThisCategory[index]);
   }
   
   handleTextInput(event, value, myValue){
-    console.log(value + "--1--" + myValue + "--2--" + event);
+    // console.log(value + "--1--" + myValue + "--2--" + event);
     var index =-1;
     var obj = this.state.questionsForThisCategory.find(function(item, i){
       if(item.Question._ === event){
@@ -210,7 +210,7 @@ class App extends Component {
     this.state.questionsForThisCategory[index]['Event'] = this.state.garageEventDefault;
     this.state.questionsForThisCategory[index]['TimeTicks'] = new Date().getTime();
     
-    console.log(this.state.questionsForThisCategory[index]);
+    // console.log(this.state.questionsForThisCategory[index]);
     
 
   }
