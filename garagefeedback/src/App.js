@@ -18,6 +18,7 @@ import FlatButton from 'material-ui/FlatButton';
 // import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
+import shortid from 'shortid';
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -27,6 +28,13 @@ const muiTheme = getMuiTheme({
     height: 50,
   },
 });
+const paperStyle = { 
+  textAlign: 'center', 
+  padding: 20, 
+  display: 'inline-block', 
+  alignContent: 'center', 
+  alignSelf: 'center' 
+};
 const styles = {
   block: {
     maxWidth: 250,
@@ -55,23 +63,33 @@ class App extends Component {
     this.state = {
       employeeIdNotSetDialogOpen: false,
       employeeId :"",
-      questionsForThisCategory: [
-        {"Q": "Did you like the session?", "ACategory": "binary"},
-        {"Q": "How useful was the content to you?", "ACategory": "agreementIntensity"},
-        {"Q":"Did you learn something new today?", "ACategory": "binary"},
-        {"Q":"Would you like to attend an advanced session for the same?", "ACategory": "binary"},
-        {"Q":"Do you have any suggestions about the content?", "ACategory":"text"},
-        {"Q":"Do you want to share anything else?", "ACategory": "text" }
+      questionsForThisCategory:   
+      [
+        // {Q: "Did you like the session?", ACategory: "binary"},
+        // {Q: "How useful was the content to you?", ACategory: "agreementIntensity"},
+        // {Q:"Did you learn something new today?", ACategory: "binary"},
+        // {Q:"Would you like to attend an advanced session for the same?", ACategory: "binary"},
+        // {Q:"Do you have any suggestions about the content?", ACategory:"text"},
+        // {Q:"Do you want to share anything else?", ACategory: "text" }
       ],
-      garageEvents: [{ "evnt": "Garage General Feedback" },
-      { "evnt": "Mixed Reality" },
-      { "evnt": "3d Printing" }],
-      garageEventDefault: -1,
+      garageEvents: [],
+      garageEventDefault: "Garage General Feedback",
+      garageEventCategoryDefault:-1,
       phoneScreen:true,
-      showFeedback:false
+      showFeedback:false, 
+      arrowButtonClicked:false, 
+      eventChangeHappened:false      
     }
   }
+  componentDidMount(){
+    fetch(`/events`)
+    .then(res=>res.json())
+    .then(garageEvents=>this.setState({garageEvents}
+      // , function () { console.log("zzzzzz: "); console.log(garageEvents[0].EventName._) }
+    ));
+  }
   handleEmployeeIdValueChange(event, newValue) {
+    
     this.setState({ employeeId: newValue }, function () {
       console.log(this.state.employeeId);
     });
@@ -82,14 +100,92 @@ class App extends Component {
   }
 
   handleEventSelection(event, index, value) {
-    this.setState({ garageEventDefault: value }, function () {
+    this.setState({ garageEventDefault: value, arrowButtonClicked:false, eventChangeHappened:true }, function () {
       console.log("hi")
 
     });
   }
 
   handleDisplayFeedbackForm() {
-    this.setState({ showFeedback: true });
+ 
+    fetch(`/questions?event=${this.state.garageEventDefault}`)
+      .then(res=>res.json())
+      .then(questionsForThisCategory =>this.setState({questionsForThisCategory}))
+      .then(this.setState({ showFeedback: true, arrowButtonClicked:true, eventChangeHappened:false }));  
+  }
+  
+  handleSurveySubmitButton() {
+    console.log("survey submit clicked");
+    for(var i=0;i<this.state.questionsForThisCategory.length;i++)
+    this.state.questionsForThisCategory[i]['RowKey']._ = (this.state.employeeId == "" ? "null" : this.state.employeeId);
+    console.log(JSON.stringify(this.state.questionsForThisCategory));
+
+
+    fetch(`/submit`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+
+    },
+      body: JSON.stringify(this.state.questionsForThisCategory)
+    }).then(console.log("called survey submit api"));
+  }
+    
+    // ?event=${this.state.garageEventDefault}`)
+    //   .then(res=>res.json())
+    //   .then(questionsForThisCategory =>this.setState({questionsForThisCategory}))
+    //   .then(this.setState({ showFeedback: true, arrowButtonClicked:true, eventChangeHappened:false }));
+  // }
+
+  handleBinaryButtonSelection(event, value, myValue) {
+    console.log(value + "--1--" + myValue + "--2--" + event);
+    var index =-1;
+    var obj = this.state.questionsForThisCategory.find(function(item, i){
+      if(item.Question._ === event){
+        index = i;
+        return i;
+      }
+    });
+    console.log(index, obj);
+    this.state.questionsForThisCategory[index]['Answer'] = myValue;
+    console.log(this.state.questionsForThisCategory[index]);
+  }
+
+  handleRadioButtonSelection(event, value, myValue) {
+    console.log(value + "--1--" + myValue + "--2--" + event);
+    var index =-1;
+    var obj = this.state.questionsForThisCategory.find(function(item, i){
+      if(item.Question._ === event){
+        index = i;
+        return i;
+      }
+    });
+    console.log(index, obj);
+    this.state.questionsForThisCategory[index]['Answer'] = myValue;
+    this.state.questionsForThisCategory[index]['EmployeeId'] = this.state.employeeId;
+    this.state.questionsForThisCategory[index]['Event'] = this.state.garageEventDefault;
+    
+    // this.state.questionsForThisCategory[index]['RowKey'] =  { '$': 'Edm.String', _:  new Date() };
+    console.log(this.state.questionsForThisCategory[index]);
+  }
+  
+  handleTextInput(event, value, myValue){
+    console.log(value + "--1--" + myValue + "--2--" + event);
+    var index =-1;
+    var obj = this.state.questionsForThisCategory.find(function(item, i){
+      if(item.Question._ === event){
+        index = i;
+        return i;
+      }
+    });
+    this.state.questionsForThisCategory[index]['Answer'] = myValue;
+    this.state.questionsForThisCategory[index]['EmployeeId'] = this.state.employeeId;
+    this.state.questionsForThisCategory[index]['Event'] = this.state.garageEventDefault;
+    
+    console.log(this.state.questionsForThisCategory[index]);
+    
+
   }
 
   render() {
@@ -136,11 +232,12 @@ class App extends Component {
             onChange={this.handleEventSelection.bind(this)}
             autoWidth={false}
             maxHeight={250}
-            style={{width:"200"}}
+            style={{width:"300px"}}
             value={this.state.garageEventDefault}  >
             <MenuItem value={-1} primaryText="Select Event For Feedback" />
                 {this.state.garageEvents.map(function (elem, i) {
-                  return (<MenuItem value={elem.evnt} primaryText={elem.evnt} key={i} />);
+                  // console.log(elem.EventName._);
+                  return (<MenuItem value={elem.EventName._} primaryText={elem.EventName._} key={i} />);
                 }, this)}
           </DropDownMenu>
         </MuiThemeProvider>
@@ -157,91 +254,94 @@ class App extends Component {
         
          <br/><br/>
          <div style={{paddingLeft:"5%", paddingRight:"5%"}}>
-         <h3> {this.state.garageEventDefault!=-1?this.state.garageEventDefault: "Garage General Feedback"} Survey </h3>
-         
-          {this.state.questionsForThisCategory.length == 0 ? 
-         <Paper zDepth={2} style={{ textAlign: 'center', padding: 20, display: 'inline-block', alignContent: 'center', alignSelf: 'center' }}>
-          Sorry, no survey questions available at this time. Be back later.
-         </Paper> 
-         : 
-         
-         this.state.questionsForThisCategory.map(function (elem, i) {
-          return(  
-         <Card key={i}>
-         
-    <CardHeader
-      title={i+1+". "+elem.Q}
-      style={{textAlign:"left"}}
-    />
-    {elem.ACategory == 'agreementIntensity' &&
-    <RadioButtonGroup name={elem.Q} style={{display:"flex" , flexDirection:"row"}}>
-      <RadioButton
-        value="applause"
-        label={ <img src='https://www.smileysapp.com/gif-emoji/clapping.gif' width="60" height="60" alt="Applause" /> }
-        style={styles.radioButton}
-      />
-      <RadioButton
-      value="thismuch"
-      label={ <img src='https://2.bp.blogspot.com/-buLrxuPxkI8/V-hDG7QYc-I/AAAAAAAATIs/KFVuXslyuJMgk1eBiw_KGbBJCP_2vMggACLcB/s1600/this-big-emoji.png' width="65" height="45" alt="Just This Much" /> }        
-      style={styles.radioButton}
-    />
-    <RadioButton
-        value="boring"
-        label={ <img src='http://3.bp.blogspot.com/-cDdxoFCq3mU/VlPAtfwcpHI/AAAAAAAARlc/4NKARbFMv2I/s1600/yawn-smiley.gif' width="45" height="45" alt="Boring" /> }        
-        style={styles.radioButton}
-      />
-    <RadioButton
-        value="cry"
-        label={ <img src='https://www.smileysapp.com/gif-emoji/weeping.gif' width="60" height="60" alt="Cry" /> }        
-        style={styles.radioButton}
-      />
-    
-    </RadioButtonGroup>
-    }
-    {elem.ACategory=="binary" &&
-    <RadioButtonGroup name={elem.Q} style={{display:"flex" , flexDirection:"row"}}>
-    <RadioButton
-      value="thumbs up"
-      label={ <img src='https://www.smileysapp.com/gif-emoji/thumbs-up.gif' width="60" height="60" alt="Yes!" /> }
-      style={styles.radioButton}
-    />
-    <RadioButton
-    value="thumbs down"
-    label={ <img src='https://www.smileysapp.com/gif-emoji/thumbs-down.gif' width="60" height="60" alt="No!" /> }        
-    style={styles.radioButton}
-  />
-  <RadioButton
-      value="confused"
-      //https://www.smileysapp.com/gif-emoji/dont-know.gif
-      label={ <img src='http://www.sherv.net/cm/emoticons/confused/confused-face-smiley-emoticon.gif' width="55" height="65" alt="Er..." /> }        
-      style={styles.radioButton}
-    />
-  </RadioButtonGroup>
-  }
+         {this.state.arrowButtonClicked && 
+          <h3> {this.state.garageEventDefault} Survey </h3>
+         }
 
-{elem.ACategory=="text" &&
-    <div>
-  <img src='https://www.smileysapp.com/gif-emoji/writing.gif' width="60" height="60" alt="Writing" />
-      <TextField
-      hintText="Any Suggestions?!"
-      multiLine={true}
-      rows={2}
-    />
-</div>}
-      
-  </Card>
-  
-         ); 
-         }, this)} 
-        */}
-        {/* <RaisedButton label="Submit" primary={true} style={{margin:"12"}} />
-        <br/><br/> */}
+          {this.state.questionsForThisCategory.length == 0 || this.state.eventChangeHappened ? 
+            <Paper zDepth={2} style={paperStyle}>
+              Loading... Click proceed arrow if not yet! 
+            </Paper> 
+            : 
+            this.state.questionsForThisCategory.map(function (elem, i) { 
+              return( 
+              <Card key={i}>
+                <CardHeader
+                  title={i+1+". "+elem.Question._}
+                  style={{textAlign:"left"}} />
+                  {elem.AnswerCategory._ == 'intensity' &&
+                    <RadioButtonGroup 
+                      name={elem.Question._} 
+                      style={{display:"flex" , flexDirection:"row"}}
+                      onChange={this.handleRadioButtonSelection.bind(this, elem.Question._)}>
+                      <RadioButton
+                        value="applause"
+                        
+                        label={ <img src='/imgs/applause.gif' width="65" height="65" alt="Applause" /> }
+                        style={styles.radioButton}/>
+                      <RadioButton
+                        value="littleBit"
+                        label={ <img src='/imgs/littleBit.png' width="65" height="45" alt="Little Bit" /> }        
+                        style={styles.radioButton}/>
+                      <RadioButton
+                        value="boring"
+                        label={ <img src='/imgs/yawning.gif' width="45" height="45" alt="Kept Yaaawning" /> }        
+                        style={styles.radioButton}/>
+                      <RadioButton
+                        value="worthless"
+                        label={ <img src='/imgs/weeping.gif' width="60" height="60" alt="Worthless" /> }        
+                        style={styles.radioButton}/>
+                    </RadioButtonGroup>
+                  }
+                  {elem.AnswerCategory._=="binary" &&
+                    <RadioButtonGroup 
+                      name={elem.Question._} 
+                      style={{display:"flex" , flexDirection:"row"}}
+                      onChange={this.handleRadioButtonSelection.bind(this, elem.Question._)}
+                      // this.handleBinaryButtonSelection.bind(elem.Question._,this)}
+                      >
+                      
+                      <RadioButton
+                        key={elem.Question._}
+                        value="yes"
+                        label={ <img src='/imgs/thumbsUp.gif' width="60" height="60" alt="Yes!" /> }
+                        style={styles.radioButton}/>
+                      <RadioButton
+                        value="no"
+                        label={ <img src='/imgs/thumbsDown.gif' width="60" height="60" alt="No!" /> }        
+                        style={styles.radioButton}/>
+                      <RadioButton
+                        value="confused"
+                        //https://www.smileysapp.com/gif-emoji/dont-know.gif
+                        label={ <img src='/imgs/confused.gif' width="55" height="65" alt="Er..." /> }        
+                        style={styles.radioButton}/>
+                    </RadioButtonGroup>
+                  }
+
+                  {elem.AnswerCategory._=="text" &&
+                    <div>
+                      <img src='/imgs/writing.gif' width="60" height="60" alt="Writing" />
+                      <TextField
+                        hintText="Any Suggestion?!"
+                        name={elem.Question._}
+                        multiLine={true}
+                        rows={2} 
+                        onChange = {this.handleTextInput.bind(this, elem.Question._)}/>
+                    </div>
+                  }
+          
+              </Card>); 
+            }, 
+          this)} 
+          <br/>
+          <RaisedButton label="Submit" primary={true} style={{margin:"12"}} onClick={this.handleSurveySubmitButton.bind(this)}/>
+        <br/><br/>
       </div>
 
        </MuiThemeProvider>
       
       }
-      <br/>
+      <br/> 
       <br/>
       <br/>
       </div>
