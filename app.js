@@ -1,14 +1,14 @@
 // added Application Insights to send events, traces and catch exception logs
-// const appInsights = require("applicationinsights");
-// appInsights.setup("53191698-6269-4b46-b617-9d9624b6726d")
-//   .setAutoCollectConsole(true)
-//   .setAutoDependencyCorrelation(false)
-//   .setAutoCollectRequests(true)
-//   .setAutoCollectPerformance(true)
-//   .setAutoCollectExceptions(true)
-//   .setAutoCollectDependencies(true)
-//   .start();
-// var client = appInsights.defaultClient;
+const appInsights = require("applicationinsights");
+appInsights.setup("53191698-6269-4b46-b617-9d9624b6726d")
+  .setAutoCollectConsole(true)
+  .setAutoDependencyCorrelation(false)
+  .setAutoCollectRequests(true)
+  .setAutoCollectPerformance(true)
+  .setAutoCollectExceptions(true)
+  .setAutoCollectDependencies(true)
+  .start();
+var client = appInsights.defaultClient;
 
 var createError = require('http-errors');
 var express = require('express');
