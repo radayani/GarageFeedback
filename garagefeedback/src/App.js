@@ -36,9 +36,6 @@ const paperStyle = {
   alignSelf: 'center' 
 };
 const styles = {
-  block: {
-    maxWidth: 250,
-  },
   radioButton: {
     width:'10',
     marginBottom: 10,
@@ -380,7 +377,7 @@ class App extends Component {
           bodyStyle={{ backgroundColor: redA700 }}
           open={this.state.snackbarOpen}
           message={this.state.snackbarMessage}
-          autoHideDuration={4000}
+          autoHideDuration={3000}
           onRequestClose={this.handleRequestCloseFailure}
         />}
 
