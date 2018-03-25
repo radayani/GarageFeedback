@@ -254,20 +254,21 @@ class App extends Component {
         
          <br/><br/>
          <div style={{paddingLeft:"5%", paddingRight:"5%"}}>
-         {this.state.arrowButtonClicked && 
-          <h3> {this.state.garageEventDefault} Survey </h3>
-         }
+          {this.state.arrowButtonClicked && 
+            <h3> {this.state.garageEventDefault} Survey </h3>
+          }
 
           {this.state.questionsForThisCategory.length == 0 || this.state.eventChangeHappened ? 
             <Paper zDepth={2} style={paperStyle}>
               Loading... Click proceed arrow if not yet! 
             </Paper> 
             : 
-            this.state.questionsForThisCategory.map(function (elem, i) { 
+            <div>
+            {this.state.questionsForThisCategory.map(function (elem, i) { 
               return( 
               <Card key={i}>
                 <CardHeader
-                  title={i+1+". "+elem.Question._}
+                  title={i+1+". "+elem.Question._+"?"}
                   style={{textAlign:"left"}} />
                   {elem.AnswerCategory._ == 'intensity' &&
                     <RadioButtonGroup 
@@ -332,10 +333,13 @@ class App extends Component {
           
               </Card>); 
             }, 
-          this)} 
+          this)}
           <br/>
           <RaisedButton label="Submit" primary={true} style={{margin:"12"}} onClick={this.handleSurveySubmitButton.bind(this)}/>
-        <br/><br/>
+          <br/><br/>
+          </div>
+          }
+        
       </div>
 
        </MuiThemeProvider>
