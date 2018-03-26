@@ -243,7 +243,7 @@ class App extends Component {
 
         <MuiThemeProvider muiTheme={muiTheme}>
           <TextField className="App-intro"
-            hintText="Enter Your Alias/Name"
+            hintText="Enter Your Alias or Name"
             style={{ width:"200" }}
             onChange={this.handleEmployeeAliasValueChange.bind(this)}
             floatingLabelText="Employee Alias"
@@ -291,6 +291,7 @@ class App extends Component {
             </Paper> 
             : 
             <div>
+            <span style={{float:"left", color:greenA700}}>None of the fields is compulsory...</span><br/>
             {this.state.questionsForThisCategory.map(function (elem, i) { 
               return( 
               <Card key={i}>
