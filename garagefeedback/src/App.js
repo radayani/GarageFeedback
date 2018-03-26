@@ -243,7 +243,7 @@ class App extends Component {
 
         <MuiThemeProvider muiTheme={muiTheme}>
           <TextField className="App-intro"
-            hintText="Enter Your Employee Alias"
+            hintText="Enter Your Alias/Name"
             style={{ width:"200" }}
             onChange={this.handleEmployeeAliasValueChange.bind(this)}
             floatingLabelText="Employee Alias"
